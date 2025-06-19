@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     fetchAppointments() {
-      fetch("https://430s2axyj6.execute-api.us-east-1.amazonaws.com/API/Slots")
+      fetch("https://430s2axyj6.execute-api.us-east-1.amazonaws.com/API/Appointments")
         .then(res => res.json())
         .then(data => {
           const parsed = JSON.parse(data.body);
@@ -74,7 +74,7 @@ export default {
       console.log("appointmentId:", cleanAppointment.appointmentId);
       console.log(" appointmentId (direct):", appointment.appointmentId);
 
-      const url = `https://430s2axyj6.execute-api.us-east-1.amazonaws.com/API/Appointments/${appointment.appointmentId}`;
+      const url = `hthttps://430s2axyj6.execute-api.us-east-1.amazonaws.com/API/Slots/${appointment.appointmentId}`;
 
       const payload = { status: newStatus };
 

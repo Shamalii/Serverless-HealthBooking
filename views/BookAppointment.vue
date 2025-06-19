@@ -1,3 +1,4 @@
+
 <template>
   <div>
     <nav class="navbar navbar-light bg-white shadow-sm mb-4">
@@ -46,16 +47,11 @@ export default {
     };
   },
   mounted() {
-    // GET available slots
     fetch("https://430s2axyj6.execute-api.us-east-1.amazonaws.com/API/Slots")
       .then(res => res.json())
       .then(data => {
         const parsed = JSON.parse(data.body);
-        // Filter slots that are not booked yet
         this.slots = parsed.filter(s => !s.isBooked).map(s => s.slot);
-      })
-      .catch(err => {
-        console.error("Error fetching slots:", err);
       });
   },
   methods: {
@@ -66,11 +62,10 @@ export default {
         slot: this.selectedSlot
       };
 
-      // POST new appointment
       fetch("https://430s2axyj6.execute-api.us-east-1.amazonaws.com/API/Appointments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ body: JSON.stringify(payload) })
       })
         .then(res => res.json())
         .then(() => {
@@ -78,8 +73,6 @@ export default {
           this.name = "";
           this.symptoms = "";
           this.selectedSlot = "";
-          // Refresh slots to update availability
-          this.mounted();
         })
         .catch(err => {
           console.error("Error booking appointment:", err);

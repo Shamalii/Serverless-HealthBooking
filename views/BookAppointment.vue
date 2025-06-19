@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <nav class="navbar navbar-light bg-white shadow-sm mb-4">
@@ -47,11 +46,17 @@ export default {
     };
   },
   mounted() {
-    fetch("arn:aws:execute-api:us-east-1:779846801737:430s2axyj6/*/GET/Appointments")
+    // Use the API Gateway invoke URL (GET appointments)
+    fetch("https://430s2axyj6.execute-api.us-east-1.amazonaws.com/API/Appointments")
       .then(res => res.json())
       .then(data => {
+        // Your backend likely returns data as JSON string in data.body, so parse it
         const parsed = JSON.parse(data.body);
+        // Filter for available slots and map their slot names
         this.slots = parsed.filter(s => !s.isBooked).map(s => s.slot);
+      })
+      .catch(err => {
+        console.error("Error fetching slots:", err);
       });
   },
   methods: {
@@ -62,10 +67,12 @@ export default {
         slot: this.selectedSlot
       };
 
-      fetch("arn:aws:execute-api:us-east-1:779846801737:430s2axyj6/*/POST/Appointments", {
+      // Use the same URL for POST
+      fetch("https://430s2axyj6.execute-api.us-east-1.amazonaws.com/API/Appointments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ body: JSON.stringify(payload) })
+        // Send the payload directly as JSON
+        body: JSON.stringify(payload)
       })
         .then(res => res.json())
         .then(() => {
@@ -73,6 +80,8 @@ export default {
           this.name = "";
           this.symptoms = "";
           this.selectedSlot = "";
+          // Optionally refresh slots after booking
+          this.mounted();
         })
         .catch(err => {
           console.error("Error booking appointment:", err);

@@ -46,13 +46,12 @@ export default {
     };
   },
   mounted() {
-    // Use the API Gateway invoke URL (GET appointments)
-    fetch("https://430s2axyj6.execute-api.us-east-1.amazonaws.com/API/Appointments")
+    // GET available slots
+    fetch("https://430s2axyj6.execute-api.us-east-1.amazonaws.com/API/Slots")
       .then(res => res.json())
       .then(data => {
-        // Your backend likely returns data as JSON string in data.body, so parse it
         const parsed = JSON.parse(data.body);
-        // Filter for available slots and map their slot names
+        // Filter slots that are not booked yet
         this.slots = parsed.filter(s => !s.isBooked).map(s => s.slot);
       })
       .catch(err => {
@@ -67,11 +66,10 @@ export default {
         slot: this.selectedSlot
       };
 
-      // Use the same URL for POST
+      // POST new appointment
       fetch("https://430s2axyj6.execute-api.us-east-1.amazonaws.com/API/Appointments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Send the payload directly as JSON
         body: JSON.stringify(payload)
       })
         .then(res => res.json())
@@ -80,7 +78,7 @@ export default {
           this.name = "";
           this.symptoms = "";
           this.selectedSlot = "";
-          // Optionally refresh slots after booking
+          // Refresh slots to update availability
           this.mounted();
         })
         .catch(err => {
